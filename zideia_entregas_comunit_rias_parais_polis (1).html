@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zideia - Entregas Comunitárias em Paraisópolis</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter e Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            green: '#10B981',
+                            yellow: '#F59E0B',
+                            purple: '#8B5CF6',
+                            dark: '#0F172A',
+                            accent: '#EC4899',
+                            card: '#1E293B'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Personalização de Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #10B981;
+        }
+        /* Animações sutis */
+        .badge-pulse {
+            animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between antialiased selection:bg-brand-green selection:text-black">
+
+    <!-- Header Principal -->
+    <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-green via-brand-yellow to-brand-accent p-0.5 flex items-center justify-center shadow-lg shadow-brand-green/20">
+                    <div class="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center">
+                        <i class="fa-solid font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-green to-brand-yellow text-xl font-display">Z</i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="font-display font-black text-xl leading-none text-white tracking-wide">ZIDEIA <span class="text-xs font-normal text-brand-green px-1.5 py-0.5 rounded-full bg-brand-green/10 border border-brand-green/30">Paraisópolis</span></h1>
+                    <p class="text-[10px] text-slate-400 font-medium">Centavos pela conexão. 100% pra favela.</p>
+                </div>
+            </div>
+
+            <!-- Contador de Economia Comunitária Rapidinho -->
+            <button onclick="switchTab('transparency')" class="bg-slate-800 hover:bg-slate-700/80 border border-slate-700 rounded-xl px-2.5 py-1.5 text-right transition flex items-center space-x-2">
+                <i class="fa-solid fa-piggy-bank text-brand-yellow text-sm"></i>
+                <div class="text-left">
+                    <p class="text-[9px] uppercase tracking-wider text-slate-400 font-bold">Economia do Bairro</p>
+                    <p class="text-xs font-bold text-brand-green font-display" id="global-savings-header">R$ 48.920,50</p>
+                </div>
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto w-full flex-1 p-4 pb-24">
+
+        <!-- ABA 1: RESTAURANTES & LOJAS DA FAVELA -->
+        <section id="tab-shops" class="space-y-5">
+            <!-- Banner Salve Paraisópolis -->
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-800 p-5 shadow-xl">
+                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-brand-green/10 rounded-full blur-2xl"></div>
+                <div class="relative z-10 space-y-2">
+                    <span class="inline-block bg-brand-yellow/20 text-brand-yellow text-xs px-2.5 py-1 rounded-full font-semibold border border-brand-yellow/30">
+                        <i class="fa-solid fa-fire mr-1"></i> Salve, Cria!
+                    </span>
+                    <h2 class="text-xl font-display font-bold text-white">O rango dos melhores comercios da área!</h2>
+                    <p class="text-xs text-slate-300 leading-relaxed">Taxa pro app? Só <strong>R$ 0,50</strong>. O restinho do valor vai direto pro comerciante e pro motoboy do morro.</p>
+                </div>
+            </div>
+
+            <!-- Seletor de Localização na Comunidade -->
+            <div class="bg-slate-900 rounded-2xl p-3 border border-slate-800 flex items-center justify-between">
+                <div class="flex items-center space-x-3 text-slate-300">
+                    <i class="fa-solid fa-location-dot text-brand-accent text-lg"></i>
+                    <div>
+                        <p class="text-[10px] text-slate-400 uppercase font-semibold">Sua localização em Paraisópolis</p>
+                        <select id="user-location-select" class="bg-transparent text-xs font-bold text-slate-100 focus:outline-none cursor-pointer">
+                            <option value="Rua Pasquale Gallupi, 450" class="bg-slate-900">Rua Pasquale Gallupi (Próximo à Laje)</option>
+                            <option value="Travessa 12, Casa 4" class="bg-slate-900">Travessa 12 - Beco do Sossego</option>
+                            <option value="Rua da Paz, 102" class="bg-slate-900">Rua da Paz (Ponto dos Motos)</option>
+                            <option value="Rua Ernest Renan, 890" class="bg-slate-900">Rua Ernest Renan (Campo da Estrela)</option>
+                        </select>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-down text-slate-500 text-xs"></i>
+            </div>
+
+            <!-- Categorias Rápidas -->
+            <div class="flex items-center space-x-2 overflow-x-auto pb-1 scrollbar-none text-xs">
+                <button class="bg-brand-green text-slate-950 font-bold px-4 py-2 rounded-xl whitespace-nowrap shadow-md">Tudo na Responsa</button>
+                <button class="bg-slate-900 text-slate-300 hover:text-white border border-slate-800 px-4 py-2 rounded-xl whitespace-nowrap">Marmitas & PF</button>
+                <button class="bg-slate-900 text-slate-300 hover:text-white border border-slate-800 px-4 py-2 rounded-xl whitespace-nowrap">Lanches & Podrão</button>
+                <button class="bg-slate-900 text-slate-300 hover:text-white border border-slate-800 px-4 py-2 rounded-xl whitespace-nowrap">Açaí & Doces</button>
+                <button class="bg-slate-900 text-slate-300 hover:text-white border border-slate-800 px-4 py-2 rounded-xl whitespace-nowrap">Bebidas Geladas</button>
+            </div>
+
+            <!-- Lista de Comércios Locais -->
+            <div class="space-y-4" id="shops-list">
+                <!-- Renderizado via JS -->
+            </div>
+        </section>
+
+        <!-- ABA 2: ZIDEIAS ATIVAS (CHAT EM GRUPO TRIANGULADO) -->
+        <section id="tab-zideia" class="hidden space-y-4">
+            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
+                <div>
+                    <h2 class="font-display font-bold text-lg text-white">Grupos "Zideia" Ativos</h2>
+                    <p class="text-xs text-slate-400">Triangulação direta: Você + Loja + Entregador</p>
+                </div>
+                <span class="bg-brand-green/20 text-brand-green border border-brand-green/30 text-xs px-2.5 py-1 rounded-full font-bold flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-brand-green animate-ping"></span>
+                    <span id="active-chats-count">1 Ativo</span>
+                </span>
+            </div>
+
+            <!-- Lista de Grupos Zideia -->
+            <div id="zideia-groups-list" class="space-y-3">
+                <!-- Injetado via Javascript -->
+            </div>
+
+            <!-- Area de Experiência do Chat Selecionado -->
+            <div id="zideia-chat-container" class="hidden flex flex-col h-[520px] bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden">
+                <!-- Header do Chat Zideia -->
+                <div class="p-3 bg-slate-800/80 border-b border-slate-700/80 flex items-center justify-between">
+                    <div class="flex items-center space-x-2.5">
+                        <button onclick="closeActiveChat()" class="text-slate-400 hover:text-white p-1">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </button>
+                        <div>
+                            <div class="flex items-center space-x-1.5">
+                                <h3 id="chat-title" class="font-bold text-sm text-white">Açaí do Beco #892</h3>
+                                <span class="bg-slate-700 text-brand-yellow text-[10px] font-bold px-1.5 py-0.2 rounded">Taxa App: R$ 0,50</span>
+                            </div>
+                            <p id="chat-subtitle" class="text-[11px] text-brand-green font-medium">Status: Preparando o pedido...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simulação de Troca de Papel (Persona Switcher) -->
+                <div class="bg-slate-950/80 px-3 py-2 border-b border-slate-800 flex items-center justify-between">
+                    <span class="text-[10px] uppercase font-bold text-slate-400">Falar no grupo como:</span>
+                    <div class="flex items-center space-x-1" id="role-selector">
+                        <button onclick="setUserRole('client')" id="role-btn-client" class="text-[11px] px-2.5 py-1 rounded-lg font-semibold transition bg-brand-green text-slate-950">
+                            <i class="fa-solid fa-user mr-1"></i>Cliente
+                        </button>
+                        <button onclick="setUserRole('shop')" id="role-btn-shop" class="text-[11px] px-2.5 py-1 rounded-lg font-semibold transition bg-slate-800 text-slate-300">
+                            <i class="fa-solid fa-store mr-1"></i>Comércio
+                        </button>
+                        <button onclick="setUserRole('driver')" id="role-btn-driver" class="text-[11px] px-2.5 py-1 rounded-lg font-semibold transition bg-slate-800 text-slate-300">
+                            <i class="fa-solid fa-motorcycle mr-1"></i>Entregador
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Timeline de Status Visual do Pedido -->
+                <div class="bg-slate-900/60 p-2.5 border-b border-slate-800 flex justify-around items-center text-[10px] text-center">
+                    <div id="step-1" class="flex flex-col items-center text-brand-green">
+                        <i class="fa-solid fa-receipt text-xs"></i>
+                        <span>Confirmado</span>
+                    </div>
+                    <div class="w-6 h-0.5 bg-slate-700"></div>
+                    <div id="step-2" class="flex flex-col items-center text-slate-500">
+                        <i class="fa-solid fa-fire text-xs"></i>
+                        <span>Preparo</span>
+                    </div>
+                    <div class="w-6 h-0.5 bg-slate-700"></div>
+                    <div id="step-3" class="flex flex-col items-center text-slate-500">
+                        <i class="fa-solid fa-helmet-safety text-xs"></i>
+                        <span>Na Pista</span>
+                    </div>
+                    <div class="w-6 h-0.5 bg-slate-700"></div>
+                    <div id="step-4" class="flex flex-col items-center text-slate-500">
+                        <i class="fa-solid fa-house-circle-check text-xs"></i>
+                        <span>Entregue</span>
+                    </div>
+                </div>
+
+                <!-- Feed do Chat Mensagens -->
+                <div id="chat-messages-box" class="flex-1 p-3 overflow-y-auto space-y-3 bg-slate-950/40">
+                    <!-- Injetado dinamicamente via JS -->
+                </div>
+
+                <!-- Input e Envio de Mensagem -->
+                <form id="chat-form" onsubmit="sendChatMessage(event)" class="p-2.5 bg-slate-900 border-t border-slate-800 flex items-center gap-2">
+                    <input type="text" id="chat-input" placeholder="Manda a visão no grupo..." class="flex-1 bg-slate-800 border border-slate-700 text-xs rounded-xl px-3 py-2.5 text-slate-100 focus:outline-none focus:border-brand-green">
+                    <button type="submit" class="bg-brand-green hover:bg-emerald-400 text-slate-950 font-bold p-2.5 rounded-xl transition flex items-center justify-center">
+                        <i class="fa-solid fa-paper-plane text-sm"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ABA 3: TRANSPARÊNCIA & FILOSOFIA ZIDEIA -->
+        <section id="tab-transparency" class="hidden space-y-5">
+            <div class="text-center space-y-2 py-2">
+                <div class="inline-flex items-center space-x-1.5 bg-brand-green/10 border border-brand-green/30 text-brand-green text-xs px-3 py-1 rounded-full font-bold">
+                    <i class="fa-solid fa-handshake font-bold"></i>
+                    <span>Economia Circular em Paraisópolis</span>
+                </div>
+                <h2 class="text-2xl font-display font-black text-white">Por que cobrar apenas R$ 0,50?</h2>
+                <p class="text-xs text-slate-300 max-w-xs mx-auto">Os grandes aplicativos cobram até 30% das lojas e metade da taxa do motoboy. A Zideia é diferente.</p>
+            </div>
+
+            <!-- Card Ilustrativo do Modelo de Negócio -->
+            <div class="bg-slate-900 rounded-3xl p-5 border border-slate-800 space-y-4">
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider text-slate-400 text-center">Comparativo numérico em 1 Pedido de R$ 40,00</h3>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <!-- App Tradicional -->
+                    <div class="bg-red-950/20 border border-red-900/40 rounded-2xl p-3 space-y-2 text-xs">
+                        <span class="font-bold text-red-400 block text-center">App Tradicional</span>
+                        <div class="space-y-1 text-slate-300 text-[11px]">
+                            <p>Taxa da Loja: <span class="text-red-400 font-bold">-R$ 10,00</span> (25%)</p>
+                            <p>Desconto no Frete: <span class="text-red-400 font-bold">-R$ 4,00</span></p>
+                            <p>Lucro do App: <span class="text-red-400 font-bold">R$ 14,00</span></p>
+                        </div>
+                        <div class="pt-1 border-t border-red-900/30 text-[10px] text-red-300">
+                            Dinheiro vai pra fora da comunidade.
+                        </div>
+                    </div>
+
+                    <!-- ZIDEIA -->
+                    <div class="bg-brand-green/10 border border-brand-green/30 rounded-2xl p-3 space-y-2 text-xs">
+                        <span class="font-bold text-brand-green block text-center">Modelo Zideia</span>
+                        <div class="space-y-1 text-slate-300 text-[11px]">
+                            <p>Taxa Zideia: <span class="text-brand-yellow font-bold">R$ 0,50</span> (Fixo)</p>
+                            <p>Loja Recebe: <span class="text-brand-green font-bold">100% do Lanche</span></p>
+                            <p>Entregador: <span class="text-brand-green font-bold">100% do Frete</span></p>
+                        </div>
+                        <div class="pt-1 border-t border-brand-green/20 text-[10px] text-brand-green">
+                            100% do valor circula em Paraisópolis.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard de Estatísticas da Favela -->
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 space-y-3">
+                <h3 class="text-xs font-bold text-slate-300 uppercase">Impacto acumulado no bairro</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
+                        <p class="text-[10px] text-slate-400">Conexões Realizadas</p>
+                        <p class="text-lg font-bold text-white font-display">14.820</p>
+                        <p class="text-[9px] text-brand-green">Zideias finalizadas</p>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
+                        <p class="text-[10px] text-slate-400">Mantido nos Comércios</p>
+                        <p class="text-lg font-bold text-brand-yellow font-display">R$ 185.200</p>
+                        <p class="text-[9px] text-slate-400">Sem comissões abusivas</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 text-xs text-slate-300 space-y-2">
+                <p class="font-bold text-white"><i class="fa-solid fa-shield-halved text-brand-green mr-1"></i> A Zideia é de todos nós!</p>
+                <p class="leading-relaxed">A taxa de R$ 0,50 serve estritamente para manter o servidor online, os custos de SMS/WhatsApp de confirmação e a manutenção tecnológica da plataforma.</p>
+            </div>
+        </section>
+
+        <!-- ABA 4: PAINEL DO ENTREGADOR & LOJISTA -->
+        <section id="tab-partner" class="hidden space-y-4">
+            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
+                <div>
+                    <h2 class="font-display font-bold text-lg text-white">Painel do Corre</h2>
+                    <p class="text-xs text-slate-400">Visão para Entregadores e Lojistas locais</p>
+                </div>
+                <!-- Swapper Lojista / Motoboy -->
+                <div class="bg-slate-950 p-1 rounded-xl border border-slate-800 flex">
+                    <button id="mode-driver-btn" onclick="setPartnerMode('driver')" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-brand-green text-slate-950">Motoboy/Biketeiro</button>
+                    <button id="mode-shop-btn" onclick="setPartnerMode('shop')" class="px-2.5 py-1 text-xs font-bold rounded-lg text-slate-400">Lojista</button>
+                </div>
+            </div>
+
+            <!-- Resumo Financeiro Sem Descontos Abusivos -->
+            <div class="bg-gradient-to-br from-slate-900 to-slate-800 p-4 rounded-3xl border border-slate-800 space-y-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-[11px] text-slate-400 uppercase font-semibold">Ganhos no Dia (100% Seu)</p>
+                        <p class="text-2xl font-black text-brand-green font-display" id="partner-today-earnings">R$ 142,00</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[11px] text-slate-400 uppercase font-semibold">Taxa de Conexão Zideia</p>
+                        <p class="text-sm font-bold text-brand-yellow font-display" id="partner-fees-paid">R$ 3,00 <span class="text-[10px] text-slate-400 font-normal">(6 pedidos)</span></p>
+                    </div>
+                </div>
+                <div class="pt-2 border-t border-slate-700/50 flex justify-between items-center text-xs text-slate-300">
+                    <span><i class="fa-solid fa-bolt text-brand-yellow mr-1"></i> Resgate via Pix Instantâneo</span>
+                    <button onclick="simulatePixWithdraw()" class="bg-brand-green/20 hover:bg-brand-green/30 text-brand-green border border-brand-green/30 px-3 py-1 rounded-xl font-bold transition">Transferir</button>
+                </div>
+            </div>
+
+            <!-- Pedidos Disponíveis na Pista (Visão Motoboy) -->
+            <div id="partner-driver-view" class="space-y-3">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Corres Disponíveis na Comunidade</h3>
+                
+                <div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-800 space-y-3">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <span class="bg-brand-yellow/20 text-brand-yellow border border-brand-yellow/30 text-[10px] px-2 py-0.5 rounded-full font-bold">Aguardando Entregador</span>
+                            <h4 class="font-bold text-sm text-white mt-1">Lanchonete do Zé <i class="fa-solid fa-arrow-right text-xs text-slate-500 mx-1"></i> Beco do Sossego</h4>
+                            <p class="text-xs text-slate-400">Distância: ~800m (Dentro da favela)</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-base font-black text-brand-green">R$ 8,50</span>
+                            <p class="text-[9px] text-slate-400">100% seu valor</p>
+                        </div>
+                    </div>
+                    <button onclick="acceptOrderDriver('Lanchonete do Zé', 'R$ 8,50')" class="w-full bg-brand-green hover:bg-emerald-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center space-x-1.5 shadow-lg shadow-brand-green/10">
+                        <i class="fa-solid fa-hand-holding-hand"></i>
+                        <span>Pegar Esse Corre (Conexão R$ 0,50)</span>
+                    </button>
+                </div>
+
+                <div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-800 space-y-3">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <span class="bg-brand-yellow/20 text-brand-yellow border border-brand-yellow/30 text-[10px] px-2 py-0.5 rounded-full font-bold">Aguardando Entregador</span>
+                            <h4 class="font-bold text-sm text-white mt-1">Bar da Laje <i class="fa-solid fa-arrow-right text-xs text-slate-500 mx-1"></i> Rua Pasquale Gallupi</h4>
+                            <p class="text-xs text-slate-400">Distância: ~1.2 km</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-base font-black text-brand-green">R$ 11,00</span>
+                            <p class="text-[9px] text-slate-400">100% seu valor</p>
+                        </div>
+                    </div>
+                    <button onclick="acceptOrderDriver('Bar da Laje', 'R$ 11,00')" class="w-full bg-brand-green hover:bg-emerald-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center space-x-1.5 shadow-lg shadow-brand-green/10">
+                        <i class="fa-solid fa-hand-holding-hand"></i>
+                        <span>Pegar Esse Corre (Conexão R$ 0,50)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Visão Lojista (Oculta por padrão) -->
+            <div id="partner-shop-view" class="hidden space-y-3">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Gestão do Seu Estabelecimento</h3>
+                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-white">Status da Loja em Paraisópolis</span>
+                        <span class="bg-brand-green/20 text-brand-green border border-brand-green/30 text-xs px-2.5 py-0.5 rounded-full font-bold">Aberto pra Pedidos</span>
+                    </div>
+                    <p class="text-xs text-slate-400">Ao receber pedidos, o sistema cria a "Zideia" imediatamente ligando seu atendimento ao cliente e aos motoboys da travessa.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL DE PEDIDO / CHECKOUT DA ZIDEIA -->
+    <div id="checkout-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+        <div class="bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl border border-slate-800 p-5 space-y-4 max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom duration-200">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-xl bg-brand-green/20 border border-brand-green/30 flex items-center justify-center text-brand-green font-bold text-sm">
+                        <i class="fa-solid fa-utensils"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-white" id="modal-shop-name">Nome do Comércio</h3>
+                        <p class="text-[10px] text-slate-400">Fechando Pedido & Criando Zideia</p>
+                    </div>
+                </div>
+                <button onclick="closeCheckoutModal()" class="text-slate-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Item Selecionado -->
+            <div class="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 flex justify-between items-center">
+                <div>
+                    <h4 class="font-bold text-xs text-white" id="modal-item-name">Item do Cardápio</h4>
+                    <p class="text-[10px] text-slate-400" id="modal-item-desc">Descrição do produto saboroso</p>
+                </div>
+                <span class="font-bold text-sm text-brand-green" id="modal-item-price">R$ 0,00</span>
+            </div>
+
+            <!-- Detalhamento Transparente do Pagamento -->
+            <div class="space-y-2 bg-slate-950/50 p-3.5 rounded-2xl border border-slate-800/80 text-xs">
+                <p class="font-bold text-white text-[11px] border-b border-slate-800 pb-1 uppercase tracking-wider text-slate-400">Detalhamento Transparente</p>
+                <div class="flex justify-between text-slate-300">
+                    <span>Valor do Item (100% Loja)</span>
+                    <span id="summary-subtotal" class="font-semibold">R$ 0,00</span>
+                </div>
+                <div class="flex justify-between text-slate-300">
+                    <span>Frete do Motoboy Local</span>
+                    <span id="summary-delivery" class="font-semibold">R$ 6,00</span>
+                </div>
+                <div class="flex justify-between text-brand-yellow font-bold">
+                    <span class="flex items-center">
+                        Conexão Plataforma Zideia
+                        <i class="fa-solid fa-circle-info ml-1 text-[10px]" title="Taxa única comunitária para manter o servidor"></i>
+                    </span>
+                    <span>R$ 0,50</span>
+                </div>
+                <div class="pt-2 border-t border-slate-800 flex justify-between items-center text-sm">
+                    <span class="font-bold text-white">Total a Pagar</span>
+                    <span class="font-black text-brand-green text-base" id="summary-total">R$ 0,00</span>
+                </div>
+            </div>
+
+            <!-- Endereço Confirmado -->
+            <div class="bg-slate-950/40 p-3 rounded-xl border border-slate-800 text-xs space-y-1">
+                <span class="text-[10px] text-slate-400 uppercase font-semibold">Entrega em Paraisópolis:</span>
+                <p class="text-white font-medium flex items-center">
+                    <i class="fa-solid fa-location-dot text-brand-accent mr-1.5"></i>
+                    <span id="modal-address">Rua Pasquale Gallupi, 450</span>
+                </p>
+            </div>
+
+            <!-- Botão de Confirmação -->
+            <button onclick="confirmOrderAndStartChat()" class="w-full bg-brand-green hover:bg-emerald-400 text-slate-950 font-black py-3 rounded-2xl text-sm transition flex items-center justify-center space-x-2 shadow-lg shadow-brand-green/20">
+                <i class="fa-solid fa-comments"></i>
+                <span>Abrir a Zideia (Iniciar Grupo)</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast-notification" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-slate-800 text-white border border-brand-green px-4 py-2.5 rounded-2xl shadow-2xl flex items-center space-x-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-2">
+        <div class="w-7 h-7 rounded-full bg-brand-green/20 text-brand-green flex items-center justify-center text-xs">
+            <i class="fa-solid fa-bell"></i>
+        </div>
+        <div>
+            <p class="text-xs font-bold" id="toast-title">Notificação</p>
+            <p class="text-[10px] text-slate-300" id="toast-msg">Mensagem enviada com sucesso.</p>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-lg border-t border-slate-800">
+        <div class="max-w-md mx-auto grid grid-cols-4 py-2">
+            <button onclick="switchTab('shops')" id="nav-btn-shops" class="flex flex-col items-center justify-center py-1 text-brand-green transition">
+                <i class="fa-solid fa-store text-lg"></i>
+                <span class="text-[10px] font-bold mt-1">Comércio</span>
+            </button>
+            <button onclick="switchTab('zideia')" id="nav-btn-zideia" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-200 transition relative">
+                <div class="relative">
+                    <i class="fa-solid fa-comments text-lg"></i>
+                    <span id="unread-badge" class="absolute -top-1 -right-2 bg-brand-accent text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center badge-pulse hidden">1</span>
+                </div>
+                <span class="text-[10px] font-bold mt-1">Zideias</span>
+            </button>
+            <button onclick="switchTab('transparency')" id="nav-btn-transparency" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-200 transition">
+                <i class="fa-solid fa-scale-balanced text-lg"></i>
+                <span class="text-[10px] font-bold mt-1">R$ 0,50 Taxa</span>
+            </button>
+            <button onclick="switchTab('partner')" id="nav-btn-partner" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-200 transition">
+                <i class="fa-solid fa-id-card text-lg"></i>
+                <span class="text-[10px] font-bold mt-1">Painel Corre</span>
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        /* BASE DE DADOS SIMULADA DE COMÉRCIOS DE PARAISÓPOLIS */
+        const shopsData = [
+            {
+                id: 'shop-1',
+                name: 'Lanchonete do Zé',
+                category: 'Lanches & Salgados',
+                rating: '4.9',
+                time: '15-25 min',
+                deliveryFee: 5.00,
+                location: 'Rua Pasquale Gallupi',
+                image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&auto=format&fit=crop&q=80',
+                popularItem: {
+                    name: 'X-Tudo da Favela + Tubaína',
+                    desc: 'Hambúrguer caseiro, calabresa, ovo, queijo duplo, bacon crocante na chapa.',
+                    price: 22.00
+                }
+            },
+            {
+                id: 'shop-2',
+                name: 'Açaí do Beco',
+                category: 'Açaí & Sobremesas',
+                rating: '5.0',
+                time: '10-20 min',
+                deliveryFee: 4.50,
+                location: 'Travessa 12 (Beco do Sossego)',
+                image: 'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&auto=format&fit=crop&q=80',
+                popularItem: {
+                    name: 'Copão de Açaí 700ml Turbinado',
+                    desc: 'Leite em pó, leite condensado, morango, banana e paçoca.',
+                    price: 18.00
+                }
+            },
+            {
+                id: 'shop-3',
+                name: 'Marmitaria da Val',
+                category: 'Comida Caseira',
+                rating: '4.8',
+                time: '20-30 min',
+                deliveryFee: 6.00,
+                location: 'Rua da Paz',
+                image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&auto=format&fit=crop&q=80',
+                popularItem: {
+                    name: 'Marmitão Comercial (Feijoada)',
+                    desc: 'Acompanha arroz, couve refogada, farofa da casa e torresmo.',
+                    price: 24.00
+                }
+            },
+            {
+                id: 'shop-4',
+                name: 'Bar & Espetinho da Laje',
+                category: 'Porções & Bebidas',
+                rating: '4.9',
+                time: '15-25 min',
+                deliveryFee: 5.50,
+                location: 'Rua Ernest Renan',
+                image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&auto=format&fit=crop&q=80',
+                popularItem: {
+                    name: 'Combo 5 Espetinhos + Cerveja 600ml',
+                    desc: 'Carne, frango com bacon e queijo coalho bem assados na brasa.',
+                    price: 32.00
+                }
+            }
+        ];
+
+        /* ESTADO DA APLICAÇÃO */
+        let activeOrders = [
+            {
+                id: 'ZID-8842',
+                shopName: 'Açaí do Beco',
+                item: 'Copão de Açaí 700ml Turbinado',
+                total: 'R$ 23,00',
+                statusStep: 2, // 1: Confirmado, 2: Preparo, 3: Na Pista, 4: Entregue
+                driverName: 'Jeferson (Mec)'
+            }
+        ];
+
+        let activeChatId = 'ZID-8842';
+        let currentRole = 'client'; // 'client', 'shop', 'driver'
+        let pendingCheckout = null;
+
+        // Histórico de mensagens da Zideia
+        let chatMessages = {
+            'ZID-8842': [
+                { sender: 'system', text: 'Zideia Criada! Taxa da plataforma: R$ 0,50 fixos.', time: '18:40' },
+                { sender: 'shop', name: 'Açaí do Beco', role: 'Comércio', text: 'Salve família! Já pegamos o pedido aqui. Batendo o açaí no grau.', time: '18:41' },
+                { sender: 'driver', name: 'Jeferson (Motoboy)', role: 'Entregador', text: 'Visão! Tô aqui perto da Travessa 12 já encostando na loja pra puxar o corre.', time: '18:42' },
+                { sender: 'client', name: 'Você (Cliente)', role: 'Cliente', text: 'Fechou! Pode deixar na porta da Laje faz favor, tamo no aguardo.', time: '18:43' }
+            ]
+        };
+
+        // Renderizar Lojas
+        function renderShops() {
+            const container = document.getElementById('shops-list');
+            container.innerHTML = shopsData.map(shop => `
+                <div class="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden shadow-lg transition hover:border-slate-700">
+                    <div class="relative h-32 bg-slate-800">
+                        <img src="${shop.image}" alt="${shop.name}" class="w-full h-full object-cover">
+                        <div class="absolute top-2 right-2 bg-slate-950/80 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-bold text-brand-yellow flex items-center space-x-1 border border-slate-700">
+                            <i class="fa-solid fa-star"></i>
+                            <span>${shop.rating}</span>
+                        </div>
+                        <div class="absolute bottom-2 left-2 bg-slate-950/80 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-semibold text-slate-300 border border-slate-800">
+                            <i class="fa-solid fa-location-dot text-brand-accent mr-1"></i>${shop.location}
+                        </div>
+                    </div>
+                    <div class="p-4 space-y-3">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-base text-white font-display">${shop.name}</h3>
+                                <p class="text-xs text-slate-400">${shop.category} • ${shop.time}</p>
+                            </div>
+                            <span class="text-[10px] bg-brand-green/10 text-brand-green border border-brand-green/30 font-bold px-2 py-0.5 rounded-md">
+                                Frete R$ ${shop.deliveryFee.toFixed(2)}
+                            </span>
+                        </div>
+
+                        <!-- Destaque do Item do Cardápio -->
+                        <div class="bg-slate-950/70 p-3 rounded-2xl border border-slate-800 flex items-center justify-between">
+                            <div class="pr-2">
+                                <p class="text-xs font-bold text-slate-200">${shop.popularItem.name}</p>
+                                <p class="text-[10px] text-slate-400 line-clamp-1">${shop.popularItem.desc}</p>
+                                <p class="text-xs font-black text-brand-green mt-1">R$ ${shop.popularItem.price.toFixed(2)}</p>
+                            </div>
+                            <button onclick="openCheckout('${shop.id}')" class="bg-brand-green hover:bg-emerald-400 text-slate-950 font-bold text-xs px-3 py-2 rounded-xl transition flex items-center space-x-1 shrink-0">
+                                <i class="fa-solid fa-plus text-xs"></i>
+                                <span>Pedir</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* NAVEGAÇÃO DE ABAS */
+        function switchTab(tabId) {
+            const tabs = ['shops', 'zideia', 'transparency', 'partner'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                const btn = document.getElementById(`nav-btn-${t}`);
+                if (t === tabId) {
+                    el.classList.remove('hidden');
+                    btn.classList.add('text-brand-green');
+                    btn.classList.remove('text-slate-400');
+                } else {
+                    el.classList.add('hidden');
+                    btn.classList.remove('text-brand-green');
+                    btn.classList.add('text-slate-400');
+                }
+            });
+
+            if (tabId === 'zideia') {
+                document.getElementById('unread-badge').classList.add('hidden');
+                renderZideiaGroupsList();
+            }
+        }
+
+        /* FLUXO DE PEDIDO E ABERTURA DA ZIDEIA */
+        function openCheckout(shopId) {
+            const shop = shopsData.find(s => s.id === shopId);
+            if (!shop) return;
+
+            const selectedLocation = document.getElementById('user-location-select').value;
+            const subtotal = shop.popularItem.price;
+            const delivery = shop.deliveryFee;
+            const appFee = 0.50;
+            const total = subtotal + delivery + appFee;
+
+            pendingCheckout = {
+                shopId: shop.id,
+                shopName: shop.name,
+                itemName: shop.popularItem.name,
+                itemDesc: shop.popularItem.desc,
+                subtotal: subtotal,
+                delivery: delivery,
+                appFee: appFee,
+                total: total,
+                address: selectedLocation
+            };
+
+            document.getElementById('modal-shop-name').innerText = shop.name;
+            document.getElementById('modal-item-name').innerText = shop.popularItem.name;
+            document.getElementById('modal-item-desc').innerText = shop.popularItem.desc;
+            document.getElementById('modal-item-price').innerText = `R$ ${subtotal.toFixed(2)}`;
+            document.getElementById('summary-subtotal').innerText = `R$ ${subtotal.toFixed(2)}`;
+            document.getElementById('summary-delivery').innerText = `R$ ${delivery.toFixed(2)}`;
+            document.getElementById('summary-total').innerText = `R$ ${total.toFixed(2)}`;
+            document.getElementById('modal-address').innerText = selectedLocation;
+
+            document.getElementById('checkout-modal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkout-modal').classList.add('hidden');
+            pendingCheckout = null;
+        }
+
+        function confirmOrderAndStartChat() {
+            if (!pendingCheckout) return;
+
+            const newOrderId = `ZID-${Math.floor(1000 + Math.random() * 9000)}`;
+            const newOrder = {
+                id: newOrderId,
+                shopName: pendingCheckout.shopName,
+                item: pendingCheckout.itemName,
+                total: `R$ ${pendingCheckout.total.toFixed(2)}`,
+                statusStep: 1,
+                driverName: 'Binho Motoboy'
+            };
+
+            activeOrders.unshift(newOrder);
+
+            // Iniciar mensagens do novo grupo
+            chatMessages[newOrderId] = [
+                { sender: 'system', text: `Zideia Criada! Conexão de R$ 0,50 garantida. Endereço: ${pendingCheckout.address}`, time: getCurrentTime() },
+                { sender: 'shop', name: pendingCheckout.shopName, role: 'Comércio', text: 'Recebemos seu pedido por aqui na responssa! Já tá na chapa.', time: getCurrentTime() },
+                { sender: 'driver', name: 'Binho (Motoboy da Paz)', role: 'Entregador', text: 'Salve salve! Tô no ponto de apoio já colando na loja pra levar.', time: getCurrentTime() }
+            ];
+
+            closeCheckoutModal();
+            showToast('Zideia Criada!', 'Grupo em 3 pontas iniciado com sucesso.');
+            
+            // Trocar pra aba da Zideia e abrir o chat
+            switchTab('zideia');
+            openChatGroup(newOrderId);
+        }
+
+        /* RENDERIZAR LISTA DE ZIDEIAS (GRUPOS ATIVOS) */
+        function renderZideiaGroupsList() {
+            const container = document.getElementById('zideia-groups-list');
+            document.getElementById('active-chats-count').innerText = `${activeOrders.length} Ativo(s)`;
+
+            container.innerHTML = activeOrders.map(order => `
+                <div onclick="openChatGroup('${order.id}')" class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex items-center justify-between cursor-pointer hover:border-brand-green/50 transition">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-brand-green/10 border border-brand-green/30 flex items-center justify-center text-brand-green font-bold">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <h4 class="font-bold text-sm text-white">${order.shopName}</h4>
+                                <span class="text-[10px] text-slate-400 font-mono">#${order.id}</span>
+                            </div>
+                            <p class="text-xs text-slate-300 font-medium">${order.item}</p>
+                            <p class="text-[10px] text-brand-yellow">Triangulação: Você + Loja + ${order.driverName}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs font-bold text-brand-green">${order.total}</span>
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-600 block mt-1"></i>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* MENSAGENS E ATUALIZAÇÃO DO CHAT DA ZIDEIA */
+        function openChatGroup(orderId) {
+            activeChatId = orderId;
+            const order = activeOrders.find(o => o.id === orderId);
+            
+            document.getElementById('zideia-groups-list').classList.add('hidden');
+            document.getElementById('zideia-chat-container').classList.remove('hidden');
+
+            document.getElementById('chat-title').innerText = `${order.shopName} #${order.id}`;
+            updateChatStepVisual(order.statusStep);
+            renderChatMessages();
+        }
+
+        function closeActiveChat() {
+            document.getElementById('zideia-chat-container').classList.add('hidden');
+            document.getElementById('zideia-groups-list').classList.remove('hidden');
+            renderZideiaGroupsList();
+        }
+
+        function setUserRole(role) {
+            currentRole = role;
+            const btnClient = document.getElementById('role-btn-client');
+            const btnShop = document.getElementById('role-btn-shop');
+            const btnDriver = document.getElementById('role-btn-driver');
+
+            [btnClient, btnShop, btnDriver].forEach(b => {
+                b.className = "text-[11px] px-2.5 py-1 rounded-lg font-semibold transition bg-slate-800 text-slate-300";
+            });
+
+            if (role === 'client') {
+                btnClient.className = "text-[11px] px-2.5 py-1 rounded-lg font-semibold transition bg-brand-green text-slate-950";
+            } else if (role === 'shop') {
+                btnShop.className = "text-[11px] px-2.5 py-1 rounded-lg font-semibold transition bg-brand-yellow text-slate-950";
+            } else if (role === 'driver') {
+                btnDriver.className = "text-[11px] px-2.5 py-1 rounded-lg font-semibold transition bg-brand-purple text-white";
+            }
+        }
+
+        function updateChatStepVisual(step) {
+            for (let i = 1; i <= 4; i++) {
+                const el = document.getElementById(`step-${i}`);
+                if (i <= step) {
+                    el.className = "flex flex-col items-center text-brand-green font-bold";
+                } else {
+                    el.className = "flex flex-col items-center text-slate-600";
+                }
+            }
+        }
+
+        function renderChatMessages() {
+            const box = document.getElementById('chat-messages-box');
+            const messages = chatMessages[activeChatId] || [];
+
+            box.innerHTML = messages.map(msg => {
+                if (msg.sender === 'system') {
+                    return `
+                        <div class="text-center my-2">
+                            <span class="bg-slate-800 text-slate-300 text-[10px] px-3 py-1 rounded-full border border-slate-700">
+                                <i class="fa-solid fa-circle-info text-brand-yellow mr-1"></i>${msg.text}
+                            </span>
+                        </div>
+                    `;
+                }
+
+                let badgeColor = 'bg-brand-green text-slate-950';
+                let senderTitle = msg.name || 'Usuário';
+
+                if (msg.sender === 'shop') badgeColor = 'bg-brand-yellow text-slate-950';
+                if (msg.sender === 'driver') badgeColor = 'bg-brand-purple text-white';
+
+                return `
+                    <div class="space-y-1">
+                        <div class="flex items-center space-x-1.5">
+                            <span class="text-[9px] font-bold px-1.5 py-0.2 rounded ${badgeColor}">${msg.role || msg.sender}</span>
+                            <span class="text-[11px] font-bold text-slate-300">${senderTitle}</span>
+                            <span class="text-[9px] text-slate-500">${msg.time}</span>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 text-slate-200 text-xs p-2.5 rounded-2xl max-w-[90%] inline-block">
+                            ${msg.text}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function sendChatMessage(event) {
+            event.preventDefault();
+            const input = document.getElementById('chat-input');
+            const val = input.value.trim();
+            if (!val) return;
+
+            let roleName = 'Você (Cliente)';
+            if (currentRole === 'shop') roleName = 'Loja (Atendimento)';
+            if (currentRole === 'driver') roleName = 'Entregador (No Corre)';
+
+            const msgObj = {
+                sender: currentRole,
+                role: currentRole === 'client' ? 'Cliente' : (currentRole === 'shop' ? 'Comércio' : 'Entregador'),
+                name: roleName,
+                text: val,
+                time: getCurrentTime()
+            };
+
+            if (!chatMessages[activeChatId]) chatMessages[activeChatId] = [];
+            chatMessages[activeChatId].push(msgObj);
+
+            input.value = '';
+            renderChatMessages();
+
+            // Simular resposta automática em alguns segundos se mandado como cliente
+            if (currentRole === 'client') {
+                setTimeout(() => {
+                    simulateAutoReply();
+                }, 2000);
+            }
+        }
+
+        function simulateAutoReply() {
+            if (!chatMessages[activeChatId]) return;
+            const order = activeOrders.find(o => o.id === activeChatId);
+
+            const replies = [
+                { sender: 'driver', role: 'Entregador', name: 'Motoboy Local', text: 'Pega a visão, tô subindo a travessa agora! 2 minutinhos tá na mão.' },
+                { sender: 'shop', role: 'Comércio', name: order ? order.shopName : 'Loja', text: 'Caprichamos no pedido, tá bem embaladinho!' }
+            ];
+
+            const randomReply = replies[Math.floor(Math.random() * replies.length)];
+            randomReply.time = getCurrentTime();
+
+            chatMessages[activeChatId].push(randomReply);
+            
+            // Se estiver na aba do chat atualiza, senão acende badge
+            if (!document.getElementById('zideia-chat-container').classList.contains('hidden')) {
+                renderChatMessages();
+            } else {
+                document.getElementById('unread-badge').classList.remove('hidden');
+            }
+        }
+
+        /* ABA PARCEIRO / CORRE (PAINEL MOTOBOY E LOJISTA) */
+        function setPartnerMode(mode) {
+            const driverBtn = document.getElementById('mode-driver-btn');
+            const shopBtn = document.getElementById('mode-shop-btn');
+            const driverView = document.getElementById('partner-driver-view');
+            const shopView = document.getElementById('partner-shop-view');
+
+            if (mode === 'driver') {
+                driverBtn.className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-brand-green text-slate-950";
+                shopBtn.className = "px-2.5 py-1 text-xs font-bold rounded-lg text-slate-400";
+                driverView.classList.remove('hidden');
+                shopView.classList.add('hidden');
+            } else {
+                shopBtn.className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-brand-green text-slate-950";
+                driverBtn.className = "px-2.5 py-1 text-xs font-bold rounded-lg text-slate-400";
+                shopView.classList.remove('hidden');
+                driverView.classList.add('hidden');
+            }
+        }
+
+        function acceptOrderDriver(shop, value) {
+            showToast('Corre Aceito!', `Você pegou a entrega de ${shop}. Conexão Zideia: R$ 0,50.`);
+            
+            // Adicionar valor ao resumo
+            const earningsEl = document.getElementById('partner-today-earnings');
+            let currentVal = parseFloat(earningsEl.innerText.replace('R$', '').replace(',', '.'));
+            let addedVal = parseFloat(value.replace('R$', '').replace(',', '.'));
+            earningsEl.innerText = `R$ ${(currentVal + addedVal).toFixed(2).replace('.', ',')}`;
+        }
+
+        function simulatePixWithdraw() {
+            showToast('Pix Solicitado!', 'Valor integral de 100% transferido para sua conta sem taxas.');
+        }
+
+        /* UTILITÁRIOS */
+        function getCurrentTime() {
+            const now = new Date();
+            return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        }
+
+        function showToast(title, msg) {
+            const toast = document.getElementById('toast-notification');
+            document.getElementById('toast-title').innerText = title;
+            document.getElementById('toast-msg').innerText = msg;
+
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-2');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+            }, 3000);
+        }
+
+        /* INICIALIZAÇÃO */
+        window.onload = function() {
+            renderShops();
+            renderZideiaGroupsList();
+        };
+    </script>
+</body>
+</html>
